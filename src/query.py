@@ -6,6 +6,7 @@ Small command line tool to look things up in the index.
     python src/query.py "भारत का संविधान" -> more than one word = phrase query
 """
 
+import os
 import sys
 from index_reader import PositionalIndex
 
@@ -47,7 +48,8 @@ def run(idx, q):
 def main():
     sys.stdout.reconfigure(encoding="utf-8")
     sys.stdin.reconfigure(encoding="utf-8")
-    idx = PositionalIndex("index")
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    idx = PositionalIndex(os.path.join(root, "index"))
     print(f"vocabulary loaded: {len(idx.vocab)} terms (postings stay on disk)\n")
 
     if len(sys.argv) > 1:

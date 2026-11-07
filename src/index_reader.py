@@ -16,7 +16,8 @@ class PositionalIndex:
         with open(os.path.join(index_dir, "vocab.tsv"), encoding="utf-8") as f:
             next(f)  # header
             for line in f:
-                term, df, cf, off, length = line.rstrip("\n").split("\t")
+                # rstrip \r too, in case the file was made with windows line endings
+                term, df, cf, off, length = line.rstrip("\r\n").split("\t")
                 self.vocab[term] = (int(df), int(cf), int(off), int(length))
 
         self.postings_file = open(os.path.join(index_dir, "postings.bin"), "rb")
@@ -78,7 +79,7 @@ class PositionalIndex:
         with open(os.path.join(self.index_dir, "docs.tsv"), encoding="utf-8") as f:
             next(f)
             for line in f:
-                d, page_id, title, nw, off, length = line.rstrip("\n").split("\t")
+                d, page_id, title, nw, off, length = line.rstrip("\r\n").split("\t")
                 self.docs[int(d)] = (title, int(off), int(length))
 
     def title(self, doc_id):

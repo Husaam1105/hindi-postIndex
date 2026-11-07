@@ -26,12 +26,20 @@ import argparse
 from wiki_reader import read_articles
 from preprocess import load_stopwords, tokenize
 
+# project folder (one level above src/), so the scripts work from any directory
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 BLOCK_TOKENS = 5_000_000   # roughly how many postings to keep in RAM before flushing
+
+
+# all text files are written with newline="\n" so the index files come out the
+# same on windows, mac and linux (by default windows would write \r\n)
+NL = "\n"
 
 
 def write_block(block, block_no, block_dir):
     path = os.path.join(block_dir, f"block_{block_no:03d}.txt")
-    with open(path, "w", encoding="utf-8") as f:
+    with open(path, "w", encoding="utf-8", newline=NL) as f:
         for term in sorted(block):
             # doc ids are already in increasing order because docs come in order
             plist = ";".join(
@@ -44,7 +52,7 @@ def write_block(block, block_no, block_dir):
 def read_block(path):
     with open(path, encoding="utf-8") as f:
         for line in f:
-            term, plist = line.rstrip("\n").split("\t", 1)
+            term, plist = line.rstrip("\r\n").split("\t", 1)
             yield term, plist
 
 
@@ -59,7 +67,7 @@ def merge_blocks(block_paths, index_dir):
     vocab_path = os.path.join(index_dir, "vocab.tsv")
     n_terms = 0
 
-    with open(postings_path, "wb") as pf, open(vocab_path, "w", encoding="utf-8") as vf:
+    with open(postings_path, "wb") as pf, open(vocab_path, "w", encoding="utf-8", newline=NL) as vf:
         vf.write("term\tdf\tcf\toffset\tlength\n")
         cur_term, parts = None, []
 
@@ -89,7 +97,7 @@ def merge_blocks(block_paths, index_dir):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("dump")
-    ap.add_argument("--out", default="index")
+    ap.add_argument("--out", default=os.path.join(ROOT, "index"))
     ap.add_argument("--max-docs", type=int, default=0, help="0 = whole dump")
     args = ap.parse_args()
 
@@ -102,7 +110,7 @@ def main():
     # doc store: cleaned text of every article (doc_text.bin) + docs.tsv with
     # title and where the text is. Not needed for the index itself, but it's how
     # I check that the positions are correct (and to show snippets)
-    docs_f = open(os.path.join(args.out, "docs.tsv"), "w", encoding="utf-8")
+    docs_f = open(os.path.join(args.out, "docs.tsv"), "w", encoding="utf-8", newline=NL)
     docs_f.write("doc_id\tpage_id\ttitle\tnum_words\ttext_offset\ttext_length\n")
     text_f = open(os.path.join(args.out, "doc_text.bin"), "wb")
 
@@ -162,7 +170,7 @@ def main():
         f"time taken         : {elapsed / 60:.1f} min\n"
     )
     print("\n" + stats)
-    with open(os.path.join(args.out, "stats.txt"), "w", encoding="utf-8") as f:
+    with open(os.path.join(args.out, "stats.txt"), "w", encoding="utf-8", newline=NL) as f:
         f.write(stats)
 
 

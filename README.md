@@ -6,7 +6,10 @@ the positions of the term inside each document. The vocabulary is kept in main m
 the postings lists stay on disk. A lookup reads only the postings of the term being
 looked up.
 
-Plain Python 3 (I used 3.13). Only the standard library, nothing to pip install.
+Plain Python 3.8 or newer. Only the standard library, nothing to pip install. It works on
+Windows, Linux and macOS. I wrote it on Windows (Python 3.13) and also tested it on Ubuntu
+22.04 (Python 3.10). The index files are byte-for-byte the same on both, so an index built on
+one OS can be used on another.
 
 Data and index: <add drive / github link here>
 
@@ -36,17 +39,25 @@ time taken         : 4.1 min
 
 ## How to run
 
-From the `hindi-index` folder:
+On **Linux / macOS** use `python3` instead of `python` in all the commands below. On Windows,
+use Windows Terminal or the VS Code terminal so the Hindi text displays properly (the old
+console window shows boxes).
+
+The commands are written to be run from the `hindi-index` folder, but the scripts find
+`index/` and `output/` relative to their own location, so they also work from anywhere else.
 
 ```
 # 1. download the dump (or use the drive link above)
 #    put it in  dump/hiwiki-latest-pages-articles.xml.bz2
+#    linux/mac:  curl -L -o dump/hiwiki-latest-pages-articles.xml.bz2 \
+#                  https://dumps.wikimedia.org/hiwiki/latest/hiwiki-latest-pages-articles.xml.bz2
 
 # 2. build the index (~4 min for the whole dump on my laptop)
 python src/indexer.py dump/hiwiki-latest-pages-articles.xml.bz2
 
-#    for a quick try on a small part of the dump:
-python src/indexer.py dump/hiwiki-latest-pages-articles.xml.bz2 --max-docs 5000
+#    for a quick try on a small part of the dump (into a separate folder,
+#    so it doesn't overwrite the full index):
+python src/indexer.py dump/hiwiki-latest-pages-articles.xml.bz2 --max-docs 5000 --out index_small
 
 # 3. look up terms / phrases
 python src/query.py भारत

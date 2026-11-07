@@ -12,7 +12,8 @@ import random
 from index_reader import PositionalIndex
 from preprocess import normalize
 
-OUT = "output"
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+OUT = os.path.join(ROOT, "output")
 
 
 class Report:
@@ -24,7 +25,8 @@ class Report:
         self.lines.append(s)
 
     def save(self, path):
-        with open(path, "w", encoding="utf-8") as f:
+        # "\n" line endings on every OS
+        with open(path, "w", encoding="utf-8", newline="\n") as f:
             f.write("\n".join(self.lines) + "\n")
 
 
@@ -150,7 +152,7 @@ def rare_terms(idx):
 if __name__ == "__main__":
     sys.stdout.reconfigure(encoding="utf-8")
     os.makedirs(OUT, exist_ok=True)
-    idx = PositionalIndex("index")
+    idx = PositionalIndex(os.path.join(ROOT, "index"))
     test_cases(idx).save(os.path.join(OUT, "test_cases.txt"))
     print()
     rare_terms(idx).save(os.path.join(OUT, "rare_terms.txt"))

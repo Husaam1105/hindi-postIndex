@@ -5,7 +5,7 @@ indexed tokens     : 28276768  (stopwords not counted)
 vocabulary size    : 845356
 blocks written     : 6
 postings.bin size  : 217.8 MB
-time taken         : 4.1 min
+time taken         : 4.2 min
 
 TEST 1: frequent term - df and cf are consistent with the postings
 ------------------------------------------------------------
