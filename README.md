@@ -11,7 +11,12 @@ Windows, Linux and macOS. I wrote it on Windows (Python 3.13) and also tested it
 22.04 (Python 3.10). The index files are byte-for-byte the same on both, so an index built on
 one OS can be used on another.
 
-Data and index: <add drive / github link here>
+GitHub: https://github.com/Husaam1105/hindi-postIndex
+
+The code and the test output are on GitHub. The dump (242 MB) and the built index (~940 MB) are
+too big for GitHub, so they're not in the repo. The dump can be downloaded from the link in the
+Dataset section below, and running `src/indexer.py` on it rebuilds exactly the same index in
+about 4 minutes.
 
 
 ## Dataset
