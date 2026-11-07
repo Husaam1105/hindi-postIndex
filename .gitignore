@@ -1,0 +1,4 @@
+dump/
+index/
+__pycache__/
+*.zip

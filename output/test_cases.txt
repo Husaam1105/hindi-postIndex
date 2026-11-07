@@ -1,0 +1,59 @@
+Test cases for the Hindi positional index
+============================================================
+documents          : 174766
+indexed tokens     : 28276768  (stopwords not counted)
+vocabulary size    : 845356
+blocks written     : 6
+postings.bin size  : 217.8 MB
+time taken         : 4.1 min
+
+TEST 1: frequent term - df and cf are consistent with the postings
+------------------------------------------------------------
+term 'भारत': df = 65359, cf = 140485
+number of docs in postings list   = 65359
+sum of positions over all docs    = 140485
+doc ids sorted                    = True
+positions sorted inside every doc = True
+  doc 3 (हिन्दी): [17, 51, 65, 86, 147, 192, 220, 233, 301, 309] ...
+  doc 4 (फ़ारसी भाषा): [303, 349]
+  doc 5 (देवनागरी): [400, 533, 765, 837, 1287, 2631, 2641, 2780, 2823, 2893] ...
+RESULT: PASS
+
+TEST 2: normalization - different spellings give the same postings
+------------------------------------------------------------
+  'क़ानून' vs 'कानून' -> both normalize to 'कानून', same postings: True (df=4158, cf=10220)
+  'ज़िला' vs 'जिला' -> both normalize to 'जिला', same postings: True (df=18659, cf=28907)
+  'हँसी' vs 'हंसी' -> both normalize to 'हंसी', same postings: True (df=264, cf=428)
+  'फ़िल्म' vs 'फिल्म' -> both normalize to 'फिल्म', same postings: True (df=13304, cf=70142)
+RESULT: PASS
+
+TEST 3: stopwords and unknown words are not in the vocabulary
+------------------------------------------------------------
+  'का' in vocabulary: False
+  'है' in vocabulary: False
+  'में' in vocabulary: False
+  'और' in vocabulary: False
+  'क्षज्ञत्रकखग' in vocabulary: False
+RESULT: PASS
+
+TEST 4: phrase queries using the positions
+------------------------------------------------------------
+  "प्रधानमंत्री नरेंद्र मोदी" -> 210 docs
+     doc 53 (चण्डीगढ़) at [8361, 8616]:  इसका उद्घाटन भारत के [प्रधानमंत्री] नरेंद्र मोदी ने किया
+     doc 158 (अहमदाबाद) at [966]:  का उद्घाटन मार्च को [प्रधानमंत्री] नरेंद्र मोदी द्वारा किया
+  "भारत का संविधान" -> 524 docs
+     doc 3 (हिन्दी) at [51, 1296, 1347]:  शब्द अपेक्षाकृत कम हैं [भारत] का संविधान हिन्दी को
+     doc 6 (भारत) at [3918, 6784]:  जा चुके हैं शासन [भारत] का संविधान भारत को
+  "महात्मा गांधी" -> 1123 docs
+     doc 3 (हिन्दी) at [1247, 3063, 3276, 3944]:  स्वतन्त्रता आंदोलन के समय [महात्मा] गांधी सहित अनेक नेताओं
+     doc 6 (भारत) at [519, 2008]:  हैं फरवरी वर्ष में [महात्मा] गांधी के अस्थि कलश
+  (checked the first 50 docs of each result against the document text.
+   stopwords aren't indexed, so the का in "भारत का संविधान" can be any word,
+   which means it also matches "भारत के संविधान" - that's expected)
+RESULT: PASS
+
+TEST 5: positions point to the right word (random sample of terms)
+------------------------------------------------------------
+  checked 1188 positions of 300 random terms against the doc text
+  wrong positions: 0
+RESULT: PASS
